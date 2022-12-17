@@ -25,7 +25,7 @@ then
   canined tendermint unsafe-reset-all --home /home/cosmovisor/.canined --keep-addr-book
   
   ## update statesync details in config file by running statesync script
-  eval $(curl -s https://polkachu.com/tendermint_snapshots/chihuahua | grep curl | html2text )
+  eval $(curl -s https://polkachu.com/tendermint_snapshots/jackal | grep curl | html2text )
   
   ## update ownership after running things as root 
   chown -R cosmovisor:cosmovisor /home/cosmovisor
