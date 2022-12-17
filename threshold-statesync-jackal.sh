@@ -8,6 +8,12 @@
 ## The other adjustable component is the threshold integer, which is 75 in this example.
 ## this means that the script will trigger the unsafe-reset and statesync if 76% storage is 
 ## used.
+##
+## also, this script was written with a self hosted unbuntu server installation in mind
+## where LVM is used by default.  If you are using a cloud VPS, then you may need to alter 
+## the grep string from mapper to something like vda1 for use with Digital Ocean VPS for 
+## example.
+
 if [ $(df -h | grep mapper | cut -d' ' -f 12 | cut -d'%' -f 1) -gt 75 ] ; 
 
 then
