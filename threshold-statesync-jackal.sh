@@ -8,7 +8,7 @@
 ## The other adjustable component is the threshold integer, which is 75 in this example.
 ## this means that the script will trigger the unsafe-reset and statesync if 76% storage is 
 ## used.
-if [ $(df -h | grep mapper | cut -d' ' -f 11 | cut -d'%' -f 1) -gt 75 ] ; 
+if [ $(df -h | grep mapper | cut -d' ' -f 12 | cut -d'%' -f 1) -gt 75 ] ; 
 
 then
 
