@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 make_opts() {
     # getopt boilerplate for argument parsing

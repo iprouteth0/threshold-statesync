@@ -29,7 +29,7 @@ parse_args() {
       -d | --daemon_dir ) DAEMON_DIR="$2"; shift 2 ;;
       -n | --daemon_name ) DAEMON_NAME="$2"; shift 2 ;;
       -s | --service_file ) SERVICE_FILE="$2"; shift 2 ;;
-      -t | --threshold ) THRESHOLD="$2"; shift 2 ;;
+      -t | --threshold ) THRESHOLD="${2%\%}"; shift 2 ;;
       -u | --user ) USER="$2"; shift 2 ;;
       -v | --volume ) VOLUME="$2"; shift 2 ;;
       -h | --help ) HELP_MENU="True"; shift ;;

@@ -1,4 +1,4 @@
-#! /bin/bash -x
+#! /bin/bash
 ## Script for automating statesync of cosmos nodes based on free space threshold
 
 ## this line may need to be altered on some systems to properly output the current
@@ -30,7 +30,7 @@ parse_args() {
       -n | --daemon_name ) DAEMON_NAME="$2"; shift 2 ;;
       -r | --rpc ) RPC="$2"; shift 2 ;;
       -s | --service_file ) SERVICE_FILE="$2"; shift 2 ;;
-      -t | --threshold ) THRESHOLD="$2"; shift 2 ;;
+      -t | --threshold ) THRESHOLD="${2%\%}"; shift 2 ;;
       -u | --user ) USER="$2"; shift 2 ;;
       -v | --volume ) VOLUME="$2"; shift 2 ;;
       -h | --help ) HELP_MENU="True"; shift ;;
@@ -38,6 +38,8 @@ parse_args() {
       * ) break ;;
   esac
   done
+
+  echo $THRESHOLD
 
   if [[ -z $SERVICE_FILE ]]; then
     SERVICE_FILE="cosmovisor.service"

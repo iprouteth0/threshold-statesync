@@ -1,36 +1,78 @@
 # threshold-statesync
 A threshold based statesync script that will automate cosmos validator storage management.
 
-To use statesync version;
+## Installation
+
+To prepare to install Threshold Statesync, run the following commands:
 
 ```
 sudo su
 git clone https://github.com/iprouteth0/threshold-statesync
 cd threshold-statesync
 chmod +x deploy.sh
-./deploy.sh
+```
+
+Then, run the deploy.sh. The `systemd` argument can be passed to install using systemd service and timer files. Otherwise, crontab will be used to routinely run the scripts:
+```
+# To install with systemd files
+./deploy systemd 
+
+# To install with crontab
+./deploy
 ```
 
 For chains that require snapshots due to oracle files or wasm files not being obtained via statesync;
 
 ```
-sudo su
-git clone https://github.com/iprouteth0/threshold-statesync
-cd threshold-statesync
 chmod +x deploy-snapshot.sh
+
+# To install with systemd files
+./deploy-snapshot.sh systemd
+
+# To isntall with crontab
 ./deploy-snapshot.sh
 ```
 
-the line 
-```
-if [ $(df -h | grep mapper | cut -d' ' -f 12 | cut -d'%' -f 1) -gt 75 ] ;
-```
-that is in each version of the script will need to be slightly modified for different cloud providers.
+## Usage
 
-The existing line in the script is meant for self-hosted ubuntu server installs with LVM enabled (default setting).
+Depending on the installation method, either the crontab file or the `threshold-*.service` files control the script behavior. Multiple arguments can be passed to configure the script to your system settings within these files.
 
-To use the scripts with Digial Ocean for instance, the subshell part of the line might look closer to this;
+### Available Parameters
+| Parameter            | Type   | Required | Description                                     | Default
+|----------------------|--------|----------|-------------------------------------------------|---------|
+| -c, --chain          | String | Yes      | The chain name (jackal, kujira, etc)            | None |
+| -d, --daemon_dir     | String | Yes      | The daemon directory (eg: `/home/user/.canined`)  | None |
+| -n, --daemon_name    | String | Yes      | The daemon name or full path (eg: `canined` or `/usr/local/go/bin/canined`)| None |
+| -r, --rpc            | String | No       | The RPC to use as the state sync endpoint (only available if using the `threshold-statesync.sh` script)| `https://${CHAIN}-rpc.polkachu.com:443` |
+| -s, --service_file   | String | Yes      | The service file that controls the daemon (eg: `cosmovisor.service`, `canined.service`, etc.)| `cosmovisor.service` |
+| -t, --threshold      | String | No       | The % threshold full to run the statesync/snapshot at (eg: 75)| `75` |
+| -u, --user           | String | Yes      | The user that runs the daemon service (eg: cosmovisor)| None |
+| -v, --volume         | String | Yes      | The device with the chain data (eg: `/dev/sda3`) | None |
+
+### Example systemd configuration
+
 ```
-$(df -h | grep "vda1 " | cut -d' ' -f 17 | cut -d'%' -f 1 )
+[Unit]
+Description=Threshold Statesync Service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/root/threshold-statesync.sh \
+            -c jackal \
+            -d /home/cosmovisor/.canined/ \
+            -n canined \
+            -r "https://jackal-rpc.polkachu.com:443" \
+            -s cosmovisor.service \
+            -t 75 \
+            -u cosmovisor \
+            -v /dev/sda3
+
+[Install]
+WantedBy=default.target
 ```
 
+### Example crontab configuration
+
+```
+0 * * * * /bin/bash -c "./threshold-statesync-jackal.sh -c jackal -d /home/cosmovisor/.canined/ -n canined -r 'https://jackal-rpc.polkachu.com:443' -s cosmovisor.service -t 75 -u cosmovisor -v /dev/sda3" >> ./threshold.log 2>&1
