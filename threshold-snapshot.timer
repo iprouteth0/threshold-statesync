@@ -1,0 +1,12 @@
+[Unit]
+Description=Threshold Snapshot Timer
+RefuseManualStart=no
+RefuseManualStop=no
+
+[Timer]
+Persistent=true
+OnCalendar=*-*-* 00:00:00
+Unit=threshold-snapshot.service
+
+[Install]
+WantedBy=timers.target
