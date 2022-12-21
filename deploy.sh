@@ -2,6 +2,8 @@
 
 if [[ $1 == "systemd" || $1 == "systemctl" ]]; then
     cp threshold-statesync.sh /root/
+    cp statesync.sh /root/
+    chmod +x /root/statesync.sh
     chmod +x /root/threshold-statesync.sh
     cp threshold-statesync.service /etc/systemd/system/
     cp threshold-statesync.timer /etc/systemd/system/

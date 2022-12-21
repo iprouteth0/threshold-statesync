@@ -51,6 +51,8 @@ Depending on the installation method, either the crontab file or the `threshold-
 
 ### Example systemd configuration
 
+`/etc/systemd/system/threshold-statesync.service`
+
 ```
 [Unit]
 Description=Threshold Statesync Service
