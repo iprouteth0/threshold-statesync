@@ -4,6 +4,7 @@ Description=Threshold Snapshot Service
 [Service]
 Type=simple
 User=root
+WorkingDirectory=/root/
 ExecStart=/root/threshold-snapshot.sh
 
 [Install]

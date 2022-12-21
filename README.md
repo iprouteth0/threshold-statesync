@@ -41,7 +41,7 @@ Depending on the installation method, either the crontab file or the `threshold-
 | Parameter            | Type   | Required | Description                                     | Default
 |----------------------|--------|----------|-------------------------------------------------|---------|
 | -c, --chain          | String | Yes      | The chain name (jackal, kujira, etc)            | None |
-| -d, --daemon_dir     | String | Yes      | The daemon directory (eg: `/home/user/.canined`)  | None |
+| -d, --daemon_dir     | String | Yes      | The daemon directory (eg: `/home/user/.canine`)  | None |
 | -n, --daemon_name    | String | Yes      | The daemon name or full path (eg: `canined` or `/usr/local/go/bin/canined`)| None |
 | -r, --rpc            | String | No       | The RPC to use as the state sync endpoint (only available if using the `threshold-statesync.sh` script)| `https://${CHAIN}-rpc.polkachu.com:443` |
 | -s, --service_file   | String | Yes      | The service file that controls the daemon (eg: `cosmovisor.service`, `canined.service`, etc.)| `cosmovisor.service` |
@@ -62,7 +62,7 @@ Type=simple
 User=root
 ExecStart=/root/threshold-statesync.sh \
             -c jackal \
-            -d /home/cosmovisor/.canined/ \
+            -d /home/cosmovisor/.canine/ \
             -n canined \
             -r "https://jackal-rpc.polkachu.com:443" \
             -s cosmovisor.service \
@@ -77,4 +77,4 @@ WantedBy=default.target
 ### Example crontab configuration
 
 ```
-0 * * * * /bin/bash -c "./threshold-statesync-jackal.sh -c jackal -d /home/cosmovisor/.canined/ -n canined -r 'https://jackal-rpc.polkachu.com:443' -s cosmovisor.service -t 75 -u cosmovisor -v /dev/sda3" >> ./threshold.log 2>&1
+0 * * * * /bin/bash -c "./threshold-statesync-jackal.sh -c jackal -d /home/cosmovisor/.canine/ -n canined -r 'https://jackal-rpc.polkachu.com:443' -s cosmovisor.service -t 75 -u cosmovisor -v /dev/sda3" >> ./threshold.log 2>&1
