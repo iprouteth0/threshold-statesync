@@ -1,0 +1,11 @@
+[Unit]
+Description=Threshold Statesync Service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/
+ExecStart=/root/threshold-statesync.sh
+
+[Install]
+WantedBy=default.target
