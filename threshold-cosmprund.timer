@@ -1,0 +1,12 @@
+[Unit]
+Description=Threshold Cosmprund Timer
+RefuseManualStart=no
+RefuseManualStop=no
+
+[Timer]
+Persistent=true
+OnCalendar=*-*-* 00:00:00
+Unit=threshold-cosmprund.service
+
+[Install]
+WantedBy=timers.target
