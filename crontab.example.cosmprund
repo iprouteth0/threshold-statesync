@@ -1,0 +1,1 @@
+0 * * * * /bin/bash -c "./threshold-cosmprund.sh" >> ./threshold.log 2>&1
