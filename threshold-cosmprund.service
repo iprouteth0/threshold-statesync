@@ -1,0 +1,11 @@
+[Unit]
+Description=Threshold Cosmprund Service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/
+ExecStart=/root/threshold-cosmprund.sh
+
+[Install]
+WantedBy=default.target
