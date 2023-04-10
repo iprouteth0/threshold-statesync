@@ -40,6 +40,7 @@ Depending on the installation method, either the crontab file or the `threshold-
 ### Available Parameters
 | Parameter            | Type   | Required | Description                                     | Default
 |----------------------|--------|----------|-------------------------------------------------|---------|
+| -b, --blocks         | Int    | Yes      | The number of blocks to retain (cosmprund)      | None |
 | -c, --chain          | String | Yes      | The chain name (jackal, kujira, etc)            | None |
 | -d, --daemon_dir     | String | Yes      | The daemon directory (eg: `/home/user/.canine`)  | None |
 | -n, --daemon_name    | String | Yes      | The daemon name or full path (eg: `canined` or `/usr/local/go/bin/canined`)| None |
