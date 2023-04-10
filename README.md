@@ -15,10 +15,10 @@ chmod +x deploy.sh
 Then, run the deploy.sh. The `systemd` argument can be passed to install using systemd service and timer files. Otherwise, crontab will be used to routinely run the scripts:
 ```
 # To install with systemd files
-./deploy systemd 
+./deploy.sh systemd 
 
 # To install with crontab
-./deploy
+./deploy.sh
 ```
 
 For chains that require snapshots due to oracle files or wasm files not being obtained via statesync;
