@@ -41,7 +41,7 @@ chmod +x deploy-cosmprund.sh
 
 # To install with crontab
 ./deploy-cosmprund.sh
-
+```
 
 ## Usage
 
