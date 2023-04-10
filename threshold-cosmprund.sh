@@ -1,1 +1,117 @@
 #! /bin/bash
+## Script for automating pruning of cosmos nodes using cosmprund based on free space threshold
+
+## this line may need to be altered on some systems to properly output the current
+## usage.  Most often the "-f" integer in the cut command just needs to be adjusted
+## until the currently used percentage of "/" is the only output.  
+## 
+## The other adjustable component is the threshold integer, which is 75 in this example.
+## this means that the script will trigger the unsafe-reset and statesync if 76% storage is 
+## used.
+##
+## also, this script was written with a self hosted unbuntu server installation in mind
+## where LVM is used by default.  If you are using a cloud VPS, then you may need to alter 
+## the grep string from mapper to something like vda1 for use with Digital Ocean VPS for 
+## example.
+
+make_opts() {
+    # getopt boilerplate for argument parsing
+    local _OPTS=$(getopt -o b:c:s:n:d:t:v:u:h --long blocks:,chain:,service_file:,daemon_name:,daemon_dir:,threshold:,volume:,user:,help \
+            -n 'Treshold Cosmprund' -- "$@")
+    [[ $? != 0 ]] && { echo "Terminating..." >&2; exit 51; }
+    eval set -- "${_OPTS}"
+}
+
+parse_args() {
+  while true; do
+  case "$1" in
+      -b | --blocks ) BLOCKS="$2"; shift 2 ;;
+      -c | --chain ) CHAIN="$2"; shift 2 ;;
+      -d | --daemon_dir ) DAEMON_DIR="$2"; shift 2 ;;
+      -n | --daemon_name ) DAEMON_NAME="$2"; shift 2 ;;
+      -s | --service_file ) SERVICE_FILE="$2"; shift 2 ;;
+      -t | --threshold ) THRESHOLD="${2%\%}"; shift 2 ;;
+      -u | --user ) USER="$2"; shift 2 ;;
+      -v | --volume ) VOLUME="$2"; shift 2 ;;
+      -h | --help ) HELP_MENU="True"; shift ;;
+      -- ) shift; break ;;
+      * ) break ;;
+  esac
+  done
+
+  if [[ -z $SERVICE_FILE ]]; then
+    SERVICE_FILE="cosmovisor.service"
+  fi
+
+  if [[ -z $THRESHOLD ]]; then
+    THRESHOLD=75
+  fi
+
+  if [[ -z $DAEMON_NAME || -z $DAEMON_DIR || -z $CHAIN || -z $VOLUME || -z $USER || -z $BLOCKS ]]; then
+      printf "\
+      ${SCRIPT_NAME}: Error - Missing Arguments
+      The following arguments are required:
+          -b, --blocks
+          -n, --daemon_name
+          -d, --daemon_dir
+          -c, --chain
+          -v, --volume
+          -u, --user
+      "
+  fi
+}
+
+#run_snapshot() {
+#  if [[ $(df -h | grep $VOLUME | awk '{print $5}' | cut -d'%' -f 1) -gt $THRESHOLD ]]; then
+#    
+#    ## ensure snapshot url is valid
+#    snapshot_url="https://polkachu.com/tendermint_snapshots/${CHAIN}"
+#    curl -s $snapshot_url 1>/dev/null
+#    if [[ $? -ne 0 ]]; then
+#        printf "\
+#        Error connecting to Snapshot URL:
+#        ${snapshot_url}
+#        "
+#        exit 2
+#    fi
+run_cosmprund() {
+  if [[ $(df -h | grep $VOLUME | awk '{print $5}' | cut -d'%' -f 1) -gt $THRESHOLD ]]; then
+    
+    ## get user home directory
+    user_dir=$(eval echo "~${USER}")
+    
+    ## terminal message to user
+    echo "stopping blockchain daemon and pruning db"
+    
+    ## import .profile to ensure binary can be executed by root
+    systemctl stop $SERVICE_FILE
+    
+    ## backup validator state file for satefy
+    cp ${DAEMON_DIR}/data/priv_validator_state.json $user_dir
+
+    cosmprund prune ${DAEMON_DIR}/data -b $BLOCKS
+#    ## clear validator blockchain db while keeping address book
+#    $DAEMON_NAME tendermint unsafe-reset-all --home $DAEMON_DIR --keep-addr-book || \
+#    $DAEMON_NAME unsafe-reset-all --home $DAEMON_DIR --keep-addr-book
+#    
+#    ## apply snapshot.  HUGE thanks to Polkachu!!
+#    eval $(curl -s https://polkachu.com/tendermint_snapshots/${CHAIN} | grep curl | html2text )
+#    
+#    ## update ownership after running things as root 
+#    chown -R ${USER}:${USER} $user_dir
+  
+    ## restart blockchain daemon
+    echo "restarting blockchain daemon"
+    sudo systemctl start $SERVICE_FILE
+
+  else
+    ## terminal message to user
+    echo "free space level is acceptable"
+  fi
+}
+
+# Main:
+make_opts
+parse_args "${@}"
+run_snapshot
+exit "${?}"
