@@ -32,6 +32,16 @@ chmod +x deploy-snapshot.sh
 # To isntall with crontab
 ./deploy-snapshot.sh
 ```
+For usage of cosmprund, if that is the preferred tool;
+```
+chmod +x deploy-cosmprund.sh
+
+# To install with systemd files
+./deploy-cosmprund.sh systemd
+
+# To install with crontab
+./deploy-cosmprund.sh
+
 
 ## Usage
 
